@@ -1,1 +1,12 @@
+<h1>Angular App</h1>
+<nav>
+  @if (token) {
+    <a routerLink="/">Home</a>
+    <button (click)="logout()">Logout</button>
+  }
+  @else {
+    <a routerLink="/login">Login</a>
+    <a routerLink="/register">Register</a>
+  }
+</nav>
 <router-outlet/>
