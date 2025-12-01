@@ -1,34 +1,35 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { MaterialModule } from '../../shared/material.module';
 import { UserService } from '../../core/service/user.service';
 import { Login } from '../../core/models/Login';
+import { MaterialModule } from '../../shared/material.module';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, MaterialModule],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
   standalone: true,
-  styleUrl: './login.component.css'
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule]
 })
 export class LoginComponent implements OnInit {
+
   private userService = inject(UserService);
   private formBuilder = inject(FormBuilder);
-  private destroyRef = inject(DestroyRef);
   private router = inject(Router);
-  loginForm: FormGroup = new FormGroup({});
-  submitted: boolean = false;
 
-  ngOnInit() {
-    this.loginForm = this.formBuilder.group(
-      {
-        login: ['', Validators.required],
-        password: ['', Validators.required]
-      },
-    );
+  loginForm: FormGroup;
+  submitted = false;
+
+  constructor() {
+    this.loginForm = this.formBuilder.group({
+      login: ['', Validators.required],
+      password: ['', Validators.required]
+    });
   }
+
+  ngOnInit() { }
 
   get form() {
     return this.loginForm.controls;
@@ -36,16 +37,19 @@ export class LoginComponent implements OnInit {
 
   async onSubmit(): Promise<void> {
     this.submitted = true;
-    if (this.loginForm.invalid) {
-      return;
-    }
+    if (this.loginForm.invalid) return;
+
     const loginUser: Login = {
-      login: this.loginForm.get('login')?.value,
-      password: this.loginForm.get('password')?.value
+      login: this.form['login'].value,
+      password: this.form['password'].value
     };
-      const {token} = await this.userService.login(loginUser)
-      sessionStorage.setItem("token", token);
-      this.router.navigate(["/"]);
+
+    try {
+      await this.userService.login(loginUser);
+      this.router.navigate(['/']);
+    } catch (error) {
+      console.error('Login failed', error);
+    }
   }
 
   onReset(): void {

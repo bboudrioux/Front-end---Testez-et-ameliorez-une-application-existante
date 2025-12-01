@@ -1,5 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { AuthService } from './core/service/auth.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -7,23 +9,18 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
   imports: [
     RouterOutlet,
     RouterLink,
-    RouterLinkActive
+    CommonModule
   ],
   styleUrl: './app.component.css'
 })
 export class AppComponent {
   private router = inject(Router);
-  title = 'etudiant-frontend';
-  token: string | null = null;
+  private authService = inject(AuthService);
 
-  ngOnInit() {
-    const token = sessionStorage.getItem("token");
-    this.token = token;
-    if (!token) this.router.navigate(["/login"]);
-  }
+  token$ = this.authService.token$;
 
   logout() {
-    sessionStorage.removeItem("token");
-    this.router.navigate(["/login"]);
+    this.authService.setToken(null);
+    this.router.navigate(['/login']);
   }
 }

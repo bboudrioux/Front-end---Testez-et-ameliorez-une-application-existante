@@ -1,12 +1,14 @@
 <h1>Angular App</h1>
 <nav>
-  @if (token) {
+  <ng-container *ngIf="token$ | async as token; else guestLinks">
     <a routerLink="/">Home</a>
+    <a routerLink="/students">Students</a>
     <button (click)="logout()">Logout</button>
-  }
-  @else {
+  </ng-container>
+
+  <ng-template #guestLinks>
     <a routerLink="/login">Login</a>
     <a routerLink="/register">Register</a>
-  }
+  </ng-template>
 </nav>
-<router-outlet/>
+<router-outlet></router-outlet>
