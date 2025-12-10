@@ -69,7 +69,7 @@ export class StudentComponent implements OnInit {
   resetForm() {
     this.submitted = false;
     this.editingStudentId = null;
-    this.studentForm.reset();
+    this.studentForm.reset({firstName: '', lastName: ''});
   }
 
   get formControls() {

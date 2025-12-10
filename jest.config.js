@@ -4,6 +4,5 @@ module.exports = {
   roots: ['<rootDir>/src/'],
   testMatch: ['**/+(*.)+(spec).+(ts|js)'],
   setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
-  collectCoverage: true,
-  coverageReporters: ['html'],
+  collectCoverage: true
 };

@@ -54,6 +54,6 @@ export class LoginComponent implements OnInit {
 
   onReset(): void {
     this.submitted = false;
-    this.loginForm.reset();
+    this.loginForm.reset({ login: '', password: '' });
   }
 }

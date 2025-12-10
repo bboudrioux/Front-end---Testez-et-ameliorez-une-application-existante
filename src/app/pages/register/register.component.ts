@@ -60,6 +60,11 @@ export class RegisterComponent implements OnInit {
 
   onReset(): void {
     this.submitted = false;
-    this.registerForm.reset();
+    this.registerForm.reset({
+      firstName: '',
+      lastName: '',
+      login: '',
+      password: ''
+    });
   }
 }
