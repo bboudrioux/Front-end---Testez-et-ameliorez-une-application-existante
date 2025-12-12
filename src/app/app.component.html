@@ -3,7 +3,7 @@
   <ng-container *ngIf="token$ | async as token; else guestLinks">
     <a routerLink="/">Home</a>
     <a routerLink="/students">Students</a>
-    <button (click)="logout()">Logout</button>
+    <button data-test="logout" (click)="logout()">Logout</button>
   </ng-container>
 
   <ng-template #guestLinks>

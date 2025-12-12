@@ -16,8 +16,8 @@ export class UserService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  register(user: Register): Observable<Object> {
-    return this.http.post('/api/register', user);
+  async register(user: Register): Promise<void>{
+    await lastValueFrom(this.http.post('/api/register', user));
   }
 
   async login(user: Login): Promise<void> {

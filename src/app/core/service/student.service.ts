@@ -8,7 +8,7 @@ import { Observable, lastValueFrom } from 'rxjs';
 })
 export class StudentService {
 
-  private baseUrl = 'http://localhost:8080/api/students';
+  private baseUrl = '/api/students';
 
   constructor(private http: HttpClient) { }
 

@@ -1,0 +1,11 @@
+{
+  "registeredUser": {
+    "firstName": "Alice",
+    "lastName": "Wonderland",
+    "login": "alice",
+    "password": "password123"
+  },
+  "loginResponse": {
+    "token": "fake-jwt-token"
+  }
+}

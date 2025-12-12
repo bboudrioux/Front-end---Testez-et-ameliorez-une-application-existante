@@ -39,7 +39,7 @@ describe('StudentService', () => {
 
     service.getStudents().subscribe(students => expect(students).toEqual(mockStudents));
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students');
+    const req = httpMock.expectOne('/api/students');
     expect(req.request.method).toBe('GET');
     req.flush(mockStudents);
   });
@@ -50,7 +50,7 @@ describe('StudentService', () => {
       error: (err: HttpErrorResponse) => expect(err.status).toBe(500)
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students');
+    const req = httpMock.expectOne('/api/students');
     req.flush({ message: 'Server error' }, { status: 500, statusText: 'Internal Server Error' });
   });
 
@@ -60,7 +60,7 @@ describe('StudentService', () => {
 
     service.getStudent(1).subscribe(student => expect(student).toEqual(mockStudent));
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students/1');
+    const req = httpMock.expectOne('/api/students/1');
     expect(req.request.method).toBe('GET');
     req.flush(mockStudent);
   });
@@ -71,7 +71,7 @@ describe('StudentService', () => {
       error: (err: HttpErrorResponse) => expect(err.status).toBe(404)
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students/999');
+    const req = httpMock.expectOne('/api/students/999');
     req.flush({ message: 'Not found' }, { status: 404, statusText: 'Not Found' });
   });
 
@@ -81,7 +81,7 @@ describe('StudentService', () => {
 
     service.createStudent(newStudent).subscribe(student => expect(student).toEqual(newStudent));
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students');
+    const req = httpMock.expectOne('/api/students');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newStudent);
     req.flush(newStudent);
@@ -95,7 +95,7 @@ describe('StudentService', () => {
       error: (err: HttpErrorResponse) => expect(err.status).toBe(400)
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students');
+    const req = httpMock.expectOne('/api/students');
     req.flush({ message: 'Bad request' }, { status: 400, statusText: 'Bad Request' });
   });
 
@@ -105,7 +105,7 @@ describe('StudentService', () => {
 
     service.updateStudent(1, updatedStudent).subscribe(student => expect(student).toEqual(updatedStudent));
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students/1');
+    const req = httpMock.expectOne('/api/students/1');
     expect(req.request.method).toBe('PUT');
     expect(req.request.body).toEqual(updatedStudent);
     req.flush(updatedStudent);
@@ -119,7 +119,7 @@ describe('StudentService', () => {
       error: (err: HttpErrorResponse) => expect(err.status).toBe(404)
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students/1');
+    const req = httpMock.expectOne('/api/students/1');
     req.flush({ message: 'Not found' }, { status: 404, statusText: 'Not Found' });
   });
 
@@ -127,7 +127,7 @@ describe('StudentService', () => {
   it('should delete a student', () => {
     service.deleteStudent(1).subscribe(res => expect(res).toBeUndefined());
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students/1');
+    const req = httpMock.expectOne('/api/students/1');
     expect(req.request.method).toBe('DELETE');
     req.flush(null);
   });
@@ -138,7 +138,7 @@ describe('StudentService', () => {
       error: (err: HttpErrorResponse) => expect(err.status).toBe(404)
     });
 
-    const req = httpMock.expectOne('http://localhost:8080/api/students/999');
+    const req = httpMock.expectOne('/api/students/999');
     req.flush({ message: 'Not found' }, { status: 404, statusText: 'Not Found' });
   });
 });

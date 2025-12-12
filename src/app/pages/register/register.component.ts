@@ -37,7 +37,7 @@ export class RegisterComponent implements OnInit {
     return this.registerForm.controls;
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.submitted = true;
     if (this.registerForm.invalid) {
       return;
@@ -48,14 +48,14 @@ export class RegisterComponent implements OnInit {
       login: this.registerForm.get('login')?.value,
       password: this.registerForm.get('password')?.value
     };
-    this.userService.register(registerUser)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(
-      () => {
-        console.info('registered now redirecting to login page !! :-)');
-        this.router.navigate(['/login']);
-      },
-    );
+
+    try {
+      await this.userService.register(registerUser)
+      this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('Register failed', error);
+    }
+
   }
 
   onReset(): void {

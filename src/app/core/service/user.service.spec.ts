@@ -35,7 +35,7 @@ describe('UserService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should call /api/register with user data', () => {
+  it('should call /api/register with user data', async () => {
     const mockUser: Register = {
       firstName: 'John',
       lastName: 'Doe',
@@ -43,18 +43,17 @@ describe('UserService', () => {
       password: '1234'
     };
 
-    service.register(mockUser).subscribe(response => {
-      expect(response).toBeTruthy();
-    });
+    const registerPromise = service.register(mockUser);
 
     const req = httpMock.expectOne('/api/register');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockUser);
-
     req.flush({});
+
+    await registerPromise;
   });
 
-  it('should handle register error', () => {
+  it('should handle register error', async () => {
     const mockUser: Register = {
       firstName: 'John',
       lastName: 'Doe',
@@ -62,16 +61,23 @@ describe('UserService', () => {
       password: '1234'
     };
 
-    service.register(mockUser).subscribe({
-      next: () => fail('expected an error'),
-      error: (error: HttpErrorResponse) => {
-        expect(error.status).toBe(400);
-        expect(error.statusText).toBe('Bad Request');
-      }
-    });
+    let errorCaught: any;
+
+    const registerPromise = service.register(mockUser);
 
     const req = httpMock.expectOne('/api/register');
+
     req.flush({ message: 'Invalid data' }, { status: 400, statusText: 'Bad Request' });
+
+    try {
+      await registerPromise;
+      fail('Expected promise to reject, but it resolved.');
+    } catch (error) {
+      errorCaught = error;
+    }
+
+    expect(errorCaught).toBeTruthy();
+    expect(errorCaught.status).toBe(400);
   });
 
   it('should call /api/login and set token', async () => {
