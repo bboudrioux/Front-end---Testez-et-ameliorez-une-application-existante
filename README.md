@@ -2,6 +2,29 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.16.
 
+## 🛠️ Prerequisites
+
+Before running this project, ensure you have the following software installed on your machine:
+
+* **Node.js**: Version 18 or later (LTS recommended).
+* **npm** (Node Package Manager): Automatically installed with Node.js.
+* **Angular CLI**: Install globally using `npm install -g angular/cli`.
+
+## 🚀 Installation
+
+To set up the project locally and install all dependencies:
+
+1.  **Clone the repository:**
+    ```bash
+    git clone [Your Repository URL]
+    cd EtudiantFrontend
+    ```
+
+2.  **Install project dependencies:**
+    ```bash
+    npm install
+    ```
+
 ## Development server
 
 To start a local development server, run:
