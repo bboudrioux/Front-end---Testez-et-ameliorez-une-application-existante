@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../../core/service/user.service';
 import { Login } from '../../core/models/Login';
 import { MaterialModule } from '../../shared/material.module';
+import { AuthService } from '../../core/service/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ import { MaterialModule } from '../../shared/material.module';
 export class LoginComponent implements OnInit {
 
   private userService = inject(UserService);
+  private authService = inject(AuthService);
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
 
@@ -35,7 +37,7 @@ export class LoginComponent implements OnInit {
     return this.loginForm.controls;
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit() {
     this.submitted = true;
     if (this.loginForm.invalid) return;
 
@@ -44,12 +46,15 @@ export class LoginComponent implements OnInit {
       password: this.form['password'].value
     };
 
-    try {
-      await this.userService.login(loginUser);
-      this.router.navigate(['/']);
-    } catch (error) {
-      console.error('Login failed', error);
-    }
+    this.userService.login(loginUser)
+      .subscribe({
+        next: data => {
+          const token = data.token;
+          this.authService.setToken(token);
+          this.router.navigate(['/']);
+        },
+        error: () => console.error("Login failed")
+      });
   }
 
   onReset(): void {

@@ -26,5 +26,8 @@
         "optionalChainNotNullable": "suppress"
       }
     }
-  }
+  },
+  "exclude": [
+    "./cypress.config.ts",
+  ]
 }

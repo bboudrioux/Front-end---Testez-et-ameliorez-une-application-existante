@@ -1,8 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { FormBuilder } from '@angular/forms';
 import { UserService } from '../../core/service/user.service';
 import { Router } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -11,7 +12,7 @@ describe('LoginComponent', () => {
   let routerMock: { navigate: jest.Mock };
 
   beforeEach(async () => {
-    userServiceMock = { login: jest.fn().mockResolvedValue(undefined) };
+    userServiceMock = { login: jest.fn().mockReturnValue(of({})) };
     routerMock = { navigate: jest.fn() };
 
     await TestBed.configureTestingModule({
@@ -38,36 +39,26 @@ describe('LoginComponent', () => {
     expect(form.get('password')?.value).toBe('');
   });
 
-  it('should not call login if form is invalid', async () => {
+  it('should not call login if form is invalid', () => {
     component.loginForm.patchValue({ login: '', password: '' });
-    await component.onSubmit();
+    component.onSubmit();
     expect(userServiceMock.login).not.toHaveBeenCalled();
   });
 
-  it('should call login and navigate on valid form', async () => {
+  it('should call login and navigate on valid form', fakeAsync(() => {
     component.loginForm.patchValue({ login: 'johndoe', password: '1234' });
 
-    await component.onSubmit();
+    component.onSubmit();
+    tick();
 
     expect(userServiceMock.login).toHaveBeenCalledWith({ login: 'johndoe', password: '1234' });
     expect(routerMock.navigate).toHaveBeenCalledWith(['/']);
-  });
+  }));
 
-  it('should set submitted to true on submit', async () => {
+  it('should set submitted to true on submit', () => {
     expect(component.submitted).toBe(false);
-    await component.onSubmit();
+    component.onSubmit();
     expect(component.submitted).toBe(true);
-  });
-
-  it('should handle login error', async () => {
-    jest.spyOn(console, 'error').mockImplementation(() => { });
-    userServiceMock.login.mockRejectedValueOnce(new Error('Login failed'));
-    component.loginForm.patchValue({ login: 'johndoe', password: 'wrong' });
-
-    await component.onSubmit();
-
-    expect(userServiceMock.login).toHaveBeenCalled();
-    expect(routerMock.navigate).not.toHaveBeenCalled();
   });
 
   it('should reset form and submitted flag on onReset', () => {

@@ -19,7 +19,7 @@ describe('Login Flow', () => {
 
     cy.wait('@loginRequest');
 
-    cy.url().should('eq', Cypress.config().baseUrl + '/');
+    cy.url().should('eq', Cypress.config().baseUrl);
   });
 
   it('should log error message on invalid credentials', () => {

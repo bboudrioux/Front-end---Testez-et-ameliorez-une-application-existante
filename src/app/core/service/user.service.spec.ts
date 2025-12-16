@@ -35,7 +35,7 @@ describe('UserService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should call /api/register with user data', async () => {
+  it('should call /api/register with user data', () => {
     const mockUser: Register = {
       firstName: 'John',
       lastName: 'Doe',
@@ -43,17 +43,16 @@ describe('UserService', () => {
       password: '1234'
     };
 
-    const registerPromise = service.register(mockUser);
+    service.register(mockUser)
+      .subscribe((user) => expect(user).toEqual(mockUser));
 
     const req = httpMock.expectOne('/api/register');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockUser);
     req.flush({});
-
-    await registerPromise;
   });
 
-  it('should handle register error', async () => {
+  it('should handle register error', () => {
     const mockUser: Register = {
       firstName: 'John',
       lastName: 'Doe',
@@ -61,58 +60,42 @@ describe('UserService', () => {
       password: '1234'
     };
 
-    let errorCaught: any;
-
-    const registerPromise = service.register(mockUser);
+    service.register(mockUser).subscribe({
+      next: () => fail('expected an error'),
+      error: (err: HttpErrorResponse) => expect(err.status).toBe(400)
+    });
 
     const req = httpMock.expectOne('/api/register');
 
     req.flush({ message: 'Invalid data' }, { status: 400, statusText: 'Bad Request' });
-
-    try {
-      await registerPromise;
-      fail('Expected promise to reject, but it resolved.');
-    } catch (error) {
-      errorCaught = error;
-    }
-
-    expect(errorCaught).toBeTruthy();
-    expect(errorCaught.status).toBe(400);
   });
 
-  it('should call /api/login and set token', async () => {
+  it('should call /api/login and set token', () => {
     const mockLogin: Login = { login: 'johndoe', password: '1234' };
     const mockResponse = { token: 'fake-jwt-token' };
 
-    const loginPromise = service.login(mockLogin);
+    service.login(mockLogin)
+      .subscribe((response) => expect(response).toEqual(mockResponse));
 
     const req = httpMock.expectOne('/api/login');
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockLogin);
 
     req.flush(mockResponse);
-
-    await loginPromise;
-
-    expect(authServiceSpy.setToken).toHaveBeenCalledWith('fake-jwt-token');
   });
 
-  it('should handle login error and not call setToken', async () => {
+  it('should handle login error and not call setToken', () => {
     const mockLogin: Login = { login: 'johndoe', password: '1234' };
 
-    let errorCaught = false;
+    service.login(mockLogin)
+      .subscribe({
+        next: () => fail('expected an error'),
+        error: (err: HttpErrorResponse) => expect(err.status).toBe(400)
+      });
 
-    try {
-      const loginPromise = service.login(mockLogin);
-      const req = httpMock.expectOne('/api/login');
-      req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
+    const req = httpMock.expectOne('/api/login');
+    req.flush({ message: 'Unauthorized' }, { status: 401, statusText: 'Unauthorized' });
 
-      await loginPromise;
-    } catch (err: any) {
-      errorCaught = true;
-    }
-
-    expect(errorCaught).toBe(true);
     expect(authServiceSpy.setToken).not.toHaveBeenCalled();
   });
 });

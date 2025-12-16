@@ -12,7 +12,7 @@ describe('RegisterComponent', () => {
   let routerMock: { navigate: jest.Mock };
 
   beforeEach(async () => {
-    userServiceMock = { register: jest.fn().mockResolvedValue(undefined) };
+    userServiceMock = { register: jest.fn().mockReturnValue(of({})) };
     routerMock = { navigate: jest.fn() };
 
     await TestBed.configureTestingModule({
@@ -49,7 +49,7 @@ describe('RegisterComponent', () => {
     expect(userServiceMock.register).not.toHaveBeenCalled();
   });
 
-  it('should call userService.register and navigate to login on valid form', async () => {
+  it('should call userService.register and navigate to login on valid form', fakeAsync(() => {
     component.registerForm.patchValue({
       firstName: 'John',
       lastName: 'Doe',
@@ -57,8 +57,8 @@ describe('RegisterComponent', () => {
       password: '1234'
     });
 
-    const submitPromise = component.onSubmit();
-    await submitPromise;
+    component.onSubmit();
+    tick();
 
     expect(userServiceMock.register).toHaveBeenCalledWith({
       firstName: 'John',
@@ -67,7 +67,7 @@ describe('RegisterComponent', () => {
       password: '1234'
     });
     expect(routerMock.navigate).toHaveBeenCalledWith(['/login']);
-  });
+  }));
 
   it('should set submitted to true on submit', () => {
     component.registerForm.patchValue({
